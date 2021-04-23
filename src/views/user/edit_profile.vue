@@ -43,6 +43,7 @@
       title="修改密码"
       show-cancel-button
       @confirm="editPwd"
+      :beforeClose="beforeClose"
     >
       <van-field
         required
@@ -62,12 +63,12 @@
       :desc="userinfo.gender == 1 ? '男' : '女'"
       @click.native="gendershow = !gendershow"
     ></nscell>
-    <van-dialog v-model="gendershow" show-cancel-button @confirm="updateGender">
-      <van-picker
-        :columns="['女', '男']"
-        :default-index="userinfo.gender"
-        @change="getgender"
-    /></van-dialog>
+    <van-action-sheet
+      v-model="gendershow"
+      :actions="actions"
+      @select="onSelect"
+      :close-on-click-action="true"
+    />
   </div>
 </template>
 
@@ -87,7 +88,7 @@ export default {
       pwd: "",
       newPwd: "",
       gendershow: false,
-      newGender: "",
+      actions: [{ name: "男" }, { name: "女" }],
     };
   },
   components: {
@@ -144,18 +145,22 @@ export default {
       // 要对输入的原密码做校验
       if (this.pwd == this.userinfo.password) {
         if (/^.{4,10}$/.test(this.newPwd)) {
-          updateUserInfo(this.$route.params.id, { password: this.newPwd })
-            .then((res) => {
-              if (res.data.message == "修改成功") {
-                this.userinfo.password = this.newPwd;
-                this.$toast("请重新登录");
-                this.$router.push({ name: "login" });
-                localStorage.removeItem("mytoken");
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+          if (this.userinfo.password == this.newPwd) {
+            this.$toast.fail("输入的密码与原密码相同");
+          } else {
+            updateUserInfo(this.$route.params.id, { password: this.newPwd })
+              .then((res) => {
+                if (res.data.message == "修改成功") {
+                  this.userinfo.password = this.newPwd;
+                  this.$toast("请重新登录");
+                  this.$router.push({ name: "login" });
+                  localStorage.removeItem("mytoken");
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          }
         } else {
           this.$toast.fail("请输入4-10位的新密码!");
         }
@@ -163,24 +168,49 @@ export default {
         this.$toast.fail("与原密码不匹配!");
       }
     },
+    // 编辑密码
+    beforeClose(active, done) {
+      if (active == "confirm") {
+        if (
+          this.pwd == this.userinfo.password ||
+          !/^.{4-10}$/.test(this.newPwd) ||
+          this.newPwd == this.userinfo.password
+        ) {
+          done(false);
+        } else {
+          done();
+        }
+      } else {
+        done();
+      }
+    },
     // 性别修改
-    getgender(a, b, c) {
-      this.newGender = c;
+    async onSelect(item) {
+      // 默认情况下点击选项时不会自动收起
+      // 可以通过 close-on-click-action 属性开启自动收起
+      let gender = item.name == "男" ? 1 : 0;
+      let res = await updateUserInfo(this.$route.params.id, gender);
+      this.userinfo.gender = gender;
+      this.$toast.success(res.data.message);
+      console.log(res);
     },
-    updateGender() {
-      updateUserInfo(this.$route.params.id, { gender: this.newGender })
-        .then((res) => {
-          if (res.data.message == "修改成功") {
-            // console.log(result);
-            this.$toast.success("修改成功");
-            // 这里的重置为了页面的展示效果
-            this.userinfo.gender = this.newGender;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
+    // getgender(a, b, c) {
+    //   this.newGender = c;
+    // },
+    // updateGender() {
+    //   updateUserInfo(this.$route.params.id, { gender: this.newGender })
+    //     .then((res) => {
+    //       if (res.data.message == "修改成功") {
+    //         // console.log(result);
+    //         this.$toast.success("修改成功");
+    //         // 这里的重置为了页面的展示效果
+    //         this.userinfo.gender = this.newGender;
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // },
   },
   mounted() {
     UserDetail(this.$route.params.id)
