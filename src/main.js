@@ -5,9 +5,9 @@ import './styles/reset.css'
 // 引入路由
 import router from './router/index';
 
-import { Toast } from 'vant';
+import { Toast, Dialog, Icon, Uploader, Field, Picker } from 'vant';
 // 挂载到全局
-Vue.use(Toast);
+Vue.use(Toast).use(Dialog).use(Icon).use(Uploader).use(Field).use(Picker);
 
 Vue.config.productionTip = false
 

@@ -55,8 +55,12 @@ export default {
         userLogin(this.user)
           .then((res) => {
             if (res.data.message == "登录成功") {
+              let id = res.data.data.user.id;
+              // console.log(id);
+              localStorage.setItem("mytoken", res.data.data.token);
               this.$toast.success({ message: res.data.message });
               // console.log(res.data.message);
+              this.$router.push({ path: `/personal/${id}` });
               // 实现页面跳转
               console.log(res);
             } else {

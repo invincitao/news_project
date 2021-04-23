@@ -27,7 +27,7 @@
       有账号？
       <a href="#/login" class="">去登录</a>
     </p>
-    <div class="button" @click="register">注册</div>
+    <nsbutton @click="register" type="success">注册</nsbutton>
   </div>
 </template>
 
@@ -64,6 +64,8 @@ export default {
           .catch((err) => {
             console.log(err);
           });
+      } else {
+        this.$toast.fail("请输入内容");
       }
     },
   },
