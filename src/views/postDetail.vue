@@ -48,13 +48,13 @@
       <div class="more">更多跟帖</div>
     </div>
     <!-- 底部 -->
-    <nscomment :post="post" @click.native="putStar"></nscomment>
+    <nscomment :post="post"></nscomment>
   </div>
 </template>
 
 <script>
 import nscomment from "@/components/nscomment";
-import { getPostDetail, postLike, postStar } from "@/apis/post.js";
+import { getPostDetail, postLike } from "@/apis/post.js";
 import { userFollow, userunFollow } from "@/apis/user.js";
 export default {
   components: {
@@ -77,7 +77,6 @@ export default {
     // 关注
     async followUser() {
       let id = this.post.user.id;
-      console.log(id);
       let res;
       if (this.post.has_follow) {
         res = await userunFollow(id);
@@ -97,15 +96,6 @@ export default {
       }
       this.$toast.success(res.data.message);
       this.post.has_like = !this.post.has_like;
-    },
-    async putStar() {
-      let res = await postStar(this.post.id);
-      if (res.data.message == "收藏成功") {
-        this.post.has_star = true;
-      } else {
-        this.post.has_star = false;
-      }
-      this.$toast.success(res.data.message);
     },
   },
 };

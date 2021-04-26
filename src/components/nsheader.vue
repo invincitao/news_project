@@ -4,7 +4,7 @@
       <slot name="left"></slot>
     </div>
     <div class="center">
-      <slot name="center"></slot>
+      <slot name="center">{{ title }}</slot>
     </div>
     <div class="right">
       <slot name="right"></slot>
@@ -13,7 +13,14 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    title: {
+      type: String,
+      default: "my - header",
+    },
+  },
+};
 </script>
 
 <style lang="less" scoped>

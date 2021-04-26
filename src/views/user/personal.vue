@@ -17,9 +17,17 @@
       </div>
     </router-link>
     <!-- 单元格 -->
-    <nscell desc="关注的用户" title="我的关注"></nscell>
+    <nscell
+      desc="关注的用户"
+      title="我的关注"
+      @click.native="$router.push({ name: 'myfollow' })"
+    ></nscell>
     <nscell desc="我的跟帖" title="跟帖/回复"></nscell>
-    <nscell desc="我的收藏" title="文章/视频"></nscell>
+    <nscell
+      desc="我的收藏"
+      title="文章/视频"
+      @click.native="$router.push({ name: 'mystar' })"
+    ></nscell>
     <nscell title="设置"></nscell>
     <!-- 按钮 -->
     <nsbutton type="danger" style="margin-top: 20px" @click="exit"

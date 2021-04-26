@@ -58,11 +58,16 @@ export default {
               let id = res.data.data.user.id;
               // console.log(id);
               localStorage.setItem("mytoken", res.data.data.token);
-              this.$toast.success({ message: res.data.message });
+              localStorage.setItem("userId", id);
+              let redirect = location.href.split("=")[1];
+              if (redirect) {
+                location.href = decodeURIComponent(redirect);
+              } else {
+                this.$router.push({ path: `/personal/${id}` });
+                this.$toast.success({ message: res.data.message });
+              }
               // console.log(res.data.message);
-              this.$router.push({ path: `/personal/${id}` });
               // 实现页面跳转
-              console.log(res);
             } else {
               // console.log("用户名或密码有误...");
               this.$toast.fail({ message: "用户名或密码有误..." });

@@ -46,3 +46,17 @@ export const userunFollow = (id) => {
     url: `/user_unfollow/${id}`,
   })
 }
+
+// 用户关注列表
+export const getUserFollow = () => {
+  return axios({
+    url: `/user_follows`,
+  })
+}
+
+// 用户收藏列表
+export const getUserStar = () => {
+  return axios({
+    url: `/user_star`,
+  })
+}

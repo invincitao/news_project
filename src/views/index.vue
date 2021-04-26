@@ -9,10 +9,7 @@
         <span>搜索商品</span>
       </div>
       <div class="user">
-        <van-icon
-          name="manager-o"
-          @click="$router.push({ path: `/personal/${id}` })"
-        />
+        <van-icon name="manager-o" @click="jump" />
       </div>
     </div>
 
@@ -87,6 +84,15 @@ export default {
     nssingle,
   },
   methods: {
+    jump() {
+      let id = localStorage.getItem("userId");
+      if (id) {
+        this.$router.push({ name: "personal", params: { id: id } });
+      } else {
+        this.$router.push({ path: "/login" });
+        this.$toast.fail("请先登录再进行访问");
+      }
+    },
     async gePost() {
       // let id = this.cateList[this.active].id;
       // let res = await getPostList(id);

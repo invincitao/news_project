@@ -25,3 +25,18 @@ export const postStar = (id) => {
     url: `/post_star/${id}`,
   })
 }
+
+// 获取评论页
+export const getCommentList = (id) => {
+  return axios({
+    url: `/post_comment/${id}`,
+  })
+}
+// 发表评论
+export const publishComment = (id, data) => {
+  return axios({
+    method: 'post',
+    url: `/post_comment/${id}`,
+    data,
+  })
+}

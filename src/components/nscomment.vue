@@ -3,34 +3,96 @@
     <div class="addcomment" v-show="!isFocus">
       <input type="text" placeholder="写跟帖" @click="isFocus = !isFocus" />
       <span class="comment">
-        <i class="iconfont iconpinglun-"></i>
+        <i
+          class="iconfont iconpinglun-"
+          @click="$router.push({ path: `/comment/${post.id}` })"
+        ></i>
         <em>{{ post.comment_length }}</em>
       </span>
-      <i class="iconfont iconshoucang" :class="{ active: post.has_star }"></i>
+      <i
+        class="iconfont iconshoucang"
+        :class="{ active: post.has_star }"
+        @click="putStar"
+      ></i>
       <i class="iconfont iconfenxiang"></i>
     </div>
     <div class="inputcomment" v-show="isFocus">
-      <textarea ref="commtext" rows="5" @blur="isFocus = false"></textarea>
+      <textarea
+        ref="commtext"
+        rows="5"
+        @blur="isFocus = false"
+        v-model="content"
+      ></textarea>
       <div>
-        <span>发 送</span>
-        <span @click="isFocus = !isFocus">取 消</span>
+        <span @click="sendComment">发 送</span>
+        <span @click="cancelComment">取 消</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { postStar, publishComment } from "@/apis/post.js";
 export default {
   props: {
     post: {
       type: Object,
       required: true,
     },
+    commentObj: {
+      type: Object,
+    },
   },
   data() {
     return {
+      content: "",
       isFocus: false,
     };
+  },
+  watch: {
+    commentObj() {
+      if (this.commentObj) {
+        this.isFocus = true;
+      }
+    },
+  },
+  methods: {
+    // 收藏
+    async putStar() {
+      let res = await postStar(this.post.id);
+      if (res.data.message == "收藏成功") {
+        this.post.has_star = true;
+      } else {
+        this.post.has_star = false;
+      }
+      this.$toast.success(res.data.message);
+    },
+    async sendComment() {
+      if (this.content.length == 0) {
+        this.$toast.fail("请输入内容");
+        return;
+      }
+      let data = {
+        content: this.content,
+      };
+      if (this.commentObj) {
+        data.parent_id = this.commentObj.id;
+      }
+      let res = await publishComment(this.post.id, data);
+      console.log(res);
+      console.log(data);
+      // 提示
+      this.$toast.success("评论发表成功");
+      // 关闭评论
+      this.isFocus = false;
+      // 清空输入框
+      this.content = "";
+      this.$emit("refresh");
+    },
+    cancelComment() {
+      this.isFocus = !this.isFocus;
+      this.$emit("cancel");
+    },
   },
 };
 </script>
