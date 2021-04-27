@@ -16,7 +16,11 @@
         </div>
         <span @click="replayComment(item)">回复</span>
       </div>
-      <nsCommentItem :parent="item.parent" v-if="item.parent"></nsCommentItem>
+      <nsCommentItem
+        :parent="item.parent"
+        v-if="item.parent"
+        @replay="replayComment"
+      ></nsCommentItem>
       <div class="text">{{ item.content }}</div>
     </div>
     <!-- 品论 -->

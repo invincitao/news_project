@@ -1,13 +1,17 @@
 <template>
   <div class="commentItem">
-    <nscomment v-if="parent.parent" :parent="parent.parent"></nscomment>
+    <nscomment
+      v-if="parent.parent"
+      :parent="parent.parent"
+      @replay="handlerReplay"
+    ></nscomment>
 
     <div class="top">
       <div class="left">
         <span>{{ parent.user.nickname }}</span> &nbsp;&nbsp;&nbsp;
         <span>2分钟前</span>
       </div>
-      <span>回复</span>
+      <span @click="handlerReplay(parent)">回复</span>
     </div>
     <div class="bottom">{{ parent.content }}</div>
   </div>
@@ -19,6 +23,11 @@ export default {
   props: {
     parent: {
       type: Object,
+    },
+  },
+  methods: {
+    handlerReplay(v) {
+      this.$emit("replay", v);
     },
   },
 };
